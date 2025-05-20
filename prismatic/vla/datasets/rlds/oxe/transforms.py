@@ -43,10 +43,11 @@ def curve_hdf_dataset_transform(trajectory: Dict[str, Any], **kwargs) -> Dict[st
     trajectory["observation"]["depth_image_raw"] = tf.concat(depth_source, axis=-1)
     """
 
-    trajectory["observation"]["depth_primary_8"] = tf.cast(trajectory["observation"]["depth_primary_8"],
+    """trajectory["observation"]["depth_primary_8"] = tf.cast(trajectory["observation"]["depth_primary_8"],
                                                            dtype=tf.float32)
     trajectory["observation"]["depth_wrist_8"] = tf.cast(trajectory["observation"]["depth_wrist_8"], dtype=tf.float32)
-
+    """
+    
     proprio_source = []
     for source in proprio.split(":"):
         if source == "joint":
@@ -916,7 +917,7 @@ def aloha_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
 
 # === Registry ===
 OXE_STANDARDIZATION_TRANSFORMS = {
-    "sim_countertop_activities_dataset": curve_hdf_dataset_transform,
+    "ck_counter_dataset": curve_hdf_dataset_transform,
     "bridge_oxe": bridge_oxe_dataset_transform,
     "bridge_orig": bridge_orig_dataset_transform,
     "bridge_dataset": bridge_orig_dataset_transform,

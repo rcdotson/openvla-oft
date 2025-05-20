@@ -1,0 +1,23 @@
+torchrun --standalone --nnodes 1 --nproc-per-node 1 vla-scripts/finetune.py \
+  --vla_path openvla/openvla-7b \
+  --data_root_dir "/home/ubuntu/curve/tensorflow_datasets" \
+  --dataset_name ck_counter_dataset \
+  --run_root_dir /home/ubuntu/runs \
+  --use_l1_regression True \
+  --use_diffusion False \
+  --use_film True \
+  --num_images_in_input 2 \
+  --use_proprio True \
+  --batch_size 4 \
+  --learning_rate 5e-4 \
+  --num_steps_before_decay 50000 \
+  --max_steps 100005 \
+  --use_val_set False \
+  --val_freq 10000 \
+  --save_freq 10000 \
+  --save_latest_checkpoint_only False \
+  --image_aug True \
+  --lora_rank 32 \
+  --wandb_entity "rcdotson" \
+  --wandb_project "openvla_oft" \
+  --run_id_note ck_counter_joint
