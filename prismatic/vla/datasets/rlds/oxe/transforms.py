@@ -28,6 +28,74 @@ from prismatic.vla.datasets.rlds.utils.data_utils import (
 )
 
 
+def curve_hdf_dataset_transform(trajectory: Dict[str, Any], **kwargs) -> Dict[str, Any]:
+    #proprio = kwargs['kwargs'].get("proprio")
+    #action = kwargs['kwargs'].get("action")
+    proprio = "none"
+    action = "joint:gripper"
+
+    """depth_source = []
+    for i in trajectory["observation"]["depth_image_raw"]:
+        img = i[:,:,0]
+        img = np.float32(img)/255.0 * 2         #convert back to meters from [0-255]
+        depth_source.append(img)
+
+    trajectory["observation"]["depth_image_raw"] = tf.concat(depth_source, axis=-1)
+    """
+
+    trajectory["observation"]["depth_primary_8"] = tf.cast(trajectory["observation"]["depth_primary_8"],
+                                                           dtype=tf.float32)
+    trajectory["observation"]["depth_wrist_8"] = tf.cast(trajectory["observation"]["depth_wrist_8"], dtype=tf.float32)
+
+    proprio_source = []
+    for source in proprio.split(":"):
+        if source == "joint":
+            proprio_source.append(trajectory["observation"]["joint"])
+        if source == "xyz":
+            proprio_source.append(trajectory["observation"]["xyz"])
+        if source == "velocity":
+            proprio_source.append(trajectory["observation"]["velocity"])
+        if source == "aa":
+            proprio_source.append(trajectory["observation"]["aa"])
+        if source == "euler":
+            proprio_source.append(trajectory["observation"]["euler"])
+        if source == "q":
+            proprio_source.append(trajectory["observation"]["q"])
+        if source == "sixd":
+            proprio_source.append(trajectory["observation"]["sixd"])
+        if source == "gripper":
+            proprio_source.append(trajectory["observation"]["gripper"])
+
+    action_source = []
+    for source in action.split(":"):
+        if source == "joint":
+            action_source.append(trajectory["action_joint"])
+        if source == "xyz":
+            action_source.append(trajectory["action_xyz"])
+        if source == "dxyz":
+            action_source.append(trajectory["action_dxyz"])
+        if source == "aa":
+            action_source.append(trajectory["action_aa"])
+        if source == "euler":
+            action_source.append(trajectory["action_euler"])
+        if source == "deuler":
+            action_source.append(trajectory["action_deuler"])
+        if source == "q":
+            action_source.append(trajectory["action_q"])
+        if source == "6d":
+            action_source.append(trajectory["action_6d"])
+        if source == "gripper":
+            action_source.append(trajectory["action_gripper"])
+        if source == "terminate":
+            action_source.append(trajectory["action_terminate"])
+
+    trajectory["action"] = tf.concat(action_source, axis=-1)
+
+    if len(proprio_source) > 0:
+        trajectory["observation"]["proprio"] = tf.concat(proprio_source, axis=-1)
+
+    return trajectory
+
 def bridge_oxe_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
     """
     Applies to version of Bridge V2 in Open X-Embodiment mixture.
@@ -848,6 +916,7 @@ def aloha_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
 
 # === Registry ===
 OXE_STANDARDIZATION_TRANSFORMS = {
+    "sim_countertop_activities_dataset": curve_hdf_dataset_transform,
     "bridge_oxe": bridge_oxe_dataset_transform,
     "bridge_orig": bridge_orig_dataset_transform,
     "bridge_dataset": bridge_orig_dataset_transform,
